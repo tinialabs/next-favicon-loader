@@ -24,7 +24,7 @@ module.exports = function nextFaviconLoader(pluginConfig: PluginProps) {
         include: [path.dirname(pluginConfig.path)],
         use: [
           {
-            loader: path.resolve(__dirname, './dist/index.js'),
+            loader: path.resolve(__dirname, './index.js'),
             options: pluginConfig.meta
           }
         ]
