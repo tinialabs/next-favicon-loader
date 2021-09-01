@@ -21,6 +21,7 @@ module.exports = function nextFaviconLoader(pluginConfig: PluginProps) {
         test: new RegExp(
           (path.basename(pluginConfig.path).replace('.', '\\.') + '$', 'i')
         ),
+        type: 'asset/resource',
         include: [path.dirname(pluginConfig.path)],
         use: [
           {
