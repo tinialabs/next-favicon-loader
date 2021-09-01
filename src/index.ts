@@ -8,10 +8,125 @@ const trailingSlash = (path: string) =>
 
 const HTML_REGEX = new RegExp(/<([^ ]*)\s(.*)>/)
 
+interface IconOptions {
+  offset?: number | undefined
+  background?: boolean | string | undefined
+  mask?: boolean | undefined
+  overlayGlow?: boolean | undefined
+  ovelayShadow?: boolean | undefined
+}
+
+interface FaviconOptions {
+  /** Path for overriding default icons path @default '/' */
+  path: string
+  /** Your application's name @default null */
+  appName: string | null
+  /**
+   * Your application's short_name.
+   * @default appName
+   */
+  appShortName: string | null
+  /** Your application's description @default null */
+  appDescription: string | null
+  /** Your (or your developer's) name @default null */
+  developerName: string | null
+  /** Your (or your developer's) URL @default null */
+  developerURL: string | null
+  /** Primary text direction for name, short_name, and description @default 'auto' */
+  dir: string
+  /** Primary language for name and short_name @default 'en-US' */
+  lang: string
+  /** Background colour for flattened icons @default '#fff' */
+  background: string
+  /** Theme color user for example in Android's task switcher @default '#fff' */
+  theme_color: string
+  /** Style for Apple status bar @default 'black-translucent' */
+  appleStatusBarStyle: 'black-translucent' | 'default' | 'black'
+  /** Preferred display mode: 'fullscreen', 'standalone', 'minimal-ui' or 'browser' @default 'standalone' */
+  display: 'fullscreen' | 'standalone' | 'minimal-ui' | 'browser'
+  /** Default orientation: 'any', 'natural', 'portrait' or 'landscape' @default 'any' */
+  orientation: 'any' | 'natural' | 'portrait' | 'landscape'
+  /** Set of URLs that the browser considers within your app @default null */
+  scope: string
+  /** Start URL when launching the application from a device @default '/?homescreen=1' */
+  start_url: string
+  /** Your application's version string @default '1.0' */
+  version: string
+  /** Print logs to console? @default false */
+  logging: boolean
+  /** Determines whether to allow piping html as a file @default false */
+  pipeHTML: boolean
+  /** Use nearest neighbor resampling to preserve hard edges on pixel art @default false */
+  pixel_art: boolean
+  /** Browsers don't send cookies when fetching a manifest, enable this to fix that @default false */
+  loadManifestWithCredentials: boolean
+  /** Determines whether to set relative paths in manifests @default false */
+  manifestRelativePaths: boolean
+  /**
+   * Platform Options:
+   * - offset - offset in percentage
+   * - background:
+   *   * false - use default
+   *   * true - force use default, e.g. set background for Android icons
+   *   * color - set background for the specified icons
+   * - mask - apply mask in order to create circle icon (applied by default for firefox)
+   * - overlayGlow - apply glow effect after mask has been applied (applied by default for firefox)
+   * - overlayShadow - apply drop shadow after mask has been applied
+   */
+  icons: Partial<{
+    /* Create Android homescreen icon. */
+    android: boolean | IconOptions | string[]
+    /* Create Apple touch icons. */
+    appleIcon: boolean | IconOptions | string[]
+    /* Create Apple startup images. */
+    appleStartup: boolean | IconOptions | string[]
+    /* Create Opera Coast icon. */
+    coast: boolean | IconOptions | string[]
+    /* Create regular favicons. */
+    favicons: boolean | IconOptions | string[]
+    /* Create Firefox OS icons. */
+    firefox: boolean | IconOptions | string[]
+    /* Create Windows 8 tile icons. */
+    windows: boolean | IconOptions | string[]
+    /* Create Yandex browser icon. */
+    yandex: boolean | IconOptions | string[]
+  }>
+}
+
+export type SiteMetaData = {
+  /** Your application's name */
+  appName: string | null
+  /**
+   * Your application's short_name.
+   * @default appName
+   */
+  appShortName: string | null
+  /** Your application's description  */
+  appDescription: string | null
+  /** Background colour for flattened icons @default '#fff' */
+  background: string
+  /** Theme color user for example in Android's task switcher @default '#fff' */
+  theme_color: string
+  /** Preferred display mode: 'fullscreen', 'standalone', 'minimal-ui' or 'browser' @default 'standalone' */
+  display: 'fullscreen' | 'standalone' | 'minimal-ui' | 'browser'
+  /** Start URL when launching the application from a device @default '/?homescreen=1' */
+  start_url: string
+  /**  */
+  alwaysEmitFull: boolean
+  /**  */
+  outputPath: 'static/favicons'
+
+  emitFiles: boolean
+
+  prefix?: string
+
+  options?: string
+} & FaviconOptions
+
 export default async function loader(this: any, content: Buffer) {
   const callback = this.async()
   void (async () => {
-    const config: any = {
+    const config: SiteMetaData = {
       outputPath: 'static/favicons',
       path: '/_next/static/favicons', // Path for overriding default icons path. `string`
       emitFiles: true,
@@ -34,6 +149,8 @@ export default async function loader(this: any, content: Buffer) {
       logging: false, // Print logs to console? `boolean`
       pixel_art: false, // Keeps pixels "sharp" when scaling up, for pixel art.  Only supported in offline mode.
       loadManifestWithCredentials: false, // Browsers don't send cookies when fetching a manifest, enable this to fix that. `boolean`
+      pipeHTML: false,
+      manifestRelativePaths: false,
       icons: {
         android: true, // Create Android homescreen icon. `boolean` or `{ offset, background, mask, overlayGlow, overlayShadow }` or an array of sources
         appleIcon: true, // Create Apple touch icons. `boolean` or `{ offset, background, mask, overlayGlow, overlayShadow }` or an array of sources
@@ -101,9 +218,8 @@ export default async function loader(this: any, content: Buffer) {
             normalizedName = normalizedName.substr(0, idx)
           }
 
-          const isImmutable = /\[([^:\]]+:)?(hash|contenthash)(:[^\]]+)?]/gi.test(
-            normalizedName
-          )
+          const isImmutable =
+            /\[([^:\]]+:)?(hash|contenthash)(:[^\]]+)?]/gi.test(normalizedName)
 
           if (isImmutable === true) {
             assetInfo.immutable = true
@@ -123,6 +239,7 @@ export default async function loader(this: any, content: Buffer) {
     }
 
     const jsx = tags.map((tag, i) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const [_, tagName, rest] = HTML_REGEX.exec(tag)
       const items = rest
         .split('" ')

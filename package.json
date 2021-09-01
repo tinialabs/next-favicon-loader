@@ -1,12 +1,13 @@
 {
   "name": "next-favicon-loader",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "A favicon and manfiest generator module for Next.js with built-in webpack loader",
   "license": "MIT",
   "repository": "tinialabs/next-favicon-loader",
   "author": "guy@tinia.org",
   "homepage": "https://github.com/tinialabs/next-favicon-loader",
-  "main": "plugin.js",
+  "main": "dist/plugin.js",
+  "types": "dist/plugin.d.ts",
   "engines": {
     "node": ">= 10.13.0"
   },
@@ -22,12 +23,18 @@
   },
   "dependencies": {
     "loader-utils": "^2.0.0",
-    "schema-utils": "^3.0.0",
-    "favicons": "^6.2.0"
+    "schema-utils": "^3.1.1",
+    "favicons": "^6.2.2"
   },
   "devDependencies": {
-    "typescript": "^4.1.3",
-    "@types/loader-utils": "^2.0.1"
+    "@types/favicons": "^6.2.2",
+    "typescript": "^4.4.2",
+    "@types/loader-utils": "^2.0.3",
+    "@sync-labs/eslint-config": "^2.4.0",
+    "@types/webpack-env": "^1.16.2",
+    "eslint": "^7.32.0",
+    "next-compose-plugins": "^2.2.1",
+    "prettier": "^2.3.2"
   },
   "keywords": [
     "webpack",
