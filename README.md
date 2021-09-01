@@ -52,11 +52,11 @@ manifest:
 ```
 
 ## Options
-| Option | Default | Type | Description |
-| :--- | :------: | :--: | :---------- |
-| sitePropsYaml | './content/theme/site.yml'| string | The file containing the site meta data |
-| contentThemeFolder |'./content/theme' | string |The folder where theme files including favicon are kept |
-| faviconFile | [favicon.png'| string|  The filename including extension of the base favicon used for generating |
+| Option |  Type | Description |
+| :--- | :--: | :---------- |
+| meta | object | The contents of the file containing the site meta data |
+| file | string |The folder where theme files including favicon are kept |
+| file | string |The absolute filename including path and extension of the base favicon used for generating |
 
 ## Usage
 
