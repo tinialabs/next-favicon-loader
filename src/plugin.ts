@@ -1,5 +1,6 @@
-import path from 'path'
 import { SiteMetaData } from '.'
+
+const path = require('path')
 
 export interface PluginProps {
   /** The object containing the site meta data */
