@@ -1,6 +1,6 @@
 {
   "name": "next-favicon-loader",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "A favicon and manfiest generator module for Next.js with built-in webpack loader",
   "license": "MIT",
   "repository": "tinialabs/next-favicon-loader",
