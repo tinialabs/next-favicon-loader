@@ -4,9 +4,7 @@ const path = require('path')
 
 export interface PluginProps {
   /** The object containing the site meta data */
-  meta: SiteMetaData
-  /** The absolute filepath including extension of the base favicon used for generating */
-  path: string
+  manifest: SiteMetaData
 }
 
 /**
@@ -17,17 +15,30 @@ module.exports = function nextFaviconLoader(pluginConfig: PluginProps) {
   return (nextConfig) => ({
     ...nextConfig,
     webpack: (config, ...rest) => {
+      const imageLoaderIndex = config.module.rules.findIndex(
+        (f) => f.loader && f.loader.toString() === 'next-image-loader'
+      )
+
+      config.module.rules.splice(imageLoaderIndex, 1, {
+        ...config.module.rules[imageLoaderIndex],
+        resourceQuery: {
+          not: [
+            ...(config.module.rules[imageLoaderIndex].resourceQuery?.not || []),
+            /favicon/
+          ]
+        }
+      })
+
       config.module.rules.push({
-        // eslint-disable-next-line @rushstack/security/no-unsafe-regexp
-        test: new RegExp(
-          (path.basename(pluginConfig.path).replace('.', '\\.') + '$', 'i')
-        ),
-        type: 'asset/resource',
-        include: [path.dirname(pluginConfig.path)],
+        ...config.module.rules[imageLoaderIndex],
+        type: undefined,
+        loader: undefined,
+        options: undefined,
+        resourceQuery: /favicon/,
         use: [
           {
             loader: path.resolve(__dirname, './index.js'),
-            options: pluginConfig.meta
+            options: pluginConfig.manifest
           }
         ]
       })

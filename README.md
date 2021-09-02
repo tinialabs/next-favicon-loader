@@ -34,12 +34,12 @@ module.exports = withPlugins([
 ]);
 ```
 
-Create a site properties file with a manifest section in yaml
+Create a site properties file that includes a manifest section in yaml
 
 ``` yaml
-// content/theme/site.yml
+// docs/_config/index.yml
 ---
-title: Novela by Tinia Labs
+:
 manifest:
   appName: Novela by Narative
   appShortName: Novela
@@ -49,6 +49,7 @@ manifest:
   theme_color: "#fff"   
   display: standalone
   alwaysEmitFull: false
+:
 ```
 
 ## Options
@@ -60,13 +61,12 @@ manifest:
 
 ## Usage
 
-You can now simply create a single 512x512 or 1024x1024 png file of your favicon, require it in at least one place on both client and server side logic in your Next.js app, and in Dev mode a simple favicon will be set (with updating hashname so you 
-can see the updates on refresh) and in production builds a full set of icons and browser manifest will be generated and the associated HTML react components returned 
+You can now simply create a single 512x512 or 1024x1024 png file of your favicon, require it in at least one place on both client and server side logic in your Next.js app with a special `?favicon` resourceQuery, and in Dev mode a simple favicon will be set (with updating hashname so you can see the updates on refresh) and in production builds a full set of icons and browser manifest will be generated and the associated HTML react components returned 
 
 ### Example on client side 
 ``` js
 // pages/_app.tsx
-require('./content/favicon.png')
+import '@/docs/assets/favicon.png?favicon'
 // .. rest of _app file goes here
 ```
 
@@ -76,11 +76,10 @@ require('./content/favicon.png')
 
 import React from 'react'
 import Document, { Html, Head, Main, NextScript } from 'next/document'
+import Meta from '@/docs/assets/favicon.png?favicon'
 
 export default class MyDocument extends Document {
   render(): JSX.Element {
-    const Meta = require('@/content/theme/favicon.png')
-
     return (
       <Html lang="en">
         <Head>{Meta}</Head>
@@ -98,9 +97,20 @@ export default class MyDocument extends Document {
 // tsconfig.json
     "baseUrl": ".",
     "paths": {
-      "@/content/*": [
-        "./content/*"
+      "@/docs/*": [
+        "./docs/*"
       ]
+```
+
+``` ts
+// global.d.ts
+type FaviconData = Array<any>
+
+declare module '*.png?favicon' {
+  const content: FaviconData
+
+  export default content
+}
 ```
 
 ## License
