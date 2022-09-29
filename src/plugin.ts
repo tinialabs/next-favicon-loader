@@ -11,7 +11,7 @@ export interface PluginProps {
  * This is a Next.js plugin that uses a single favicon image to generate all icons and manifest files
  * needed for a modern web app across multiple platforms
  */
-module.exports = function nextFaviconLoader(pluginConfig: PluginProps) {
+export function nextFaviconLoader(pluginConfig: PluginProps) {
   return (nextConfig) => ({
     ...nextConfig,
     webpack: (config, ...rest) => {
@@ -47,3 +47,6 @@ module.exports = function nextFaviconLoader(pluginConfig: PluginProps) {
     }
   })
 }
+
+module.exports = nextFaviconLoader
+module.exports.nextFaviconLoader = nextFaviconLoader
